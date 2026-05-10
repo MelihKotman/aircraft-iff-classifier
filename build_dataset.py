@@ -10,6 +10,7 @@ import os
 import numpy as np
 from PIL import Image
 from sklearn.model_selection import train_test_split
+import cv2
 
 # AYARLAR
 IMG_SIZE = 224
@@ -39,14 +40,38 @@ def get_subclass(filename):
 
 def load_image(path):
     """
-    PNG/JPG -> 224x244 RGB Numpy Array
+    Şeffaf arka planı temizler, ardından karanlık/sisli görüntülerdeki
+    uçak hatlarını belirginleştirmek için OpenCV CLAHE filtresi uygular.
     """
+    # 1. PIL İLE ŞEFFAFLIK (ALPHA) TEMİZLİĞİ (Senin harika kodun)
     img = Image.open(path).convert('RGBA')
-    # Şeffaf arka planı beyaz yap
     bg = Image.new('RGBA', img.size, (255, 255, 255, 255))
-    bg.paste(img, mask=img.split()[3])  # Alpha kanalını maske olarak kullan
+    bg.paste(img, mask=img.split()[3])
     img_rgb = bg.convert('RGB').resize((IMG_SIZE, IMG_SIZE))
-    return np.array(img_rgb, dtype=np.float32)
+    
+    # Görüntüyü OpenCV'nin anlayacağı 0-255 arası formatına çevir
+    img_array = np.array(img_rgb, dtype=np.uint8)
+
+    # 2. OPENCV İLE CLAHE EKLENTİSİ (Karanlık/Sis Aşma)
+    # RGB görüntüyü LAB renk uzayına çeviriyoruz. Neden? 
+    # Çünkü sadece 'L' (Luminance/Parlaklık) kanalına işlem yapacağız, renkleri(A,B) bozmayacağız.
+    lab = cv2.cvtColor(img_array, cv2.COLOR_RGB2LAB)
+    l_channel, a, b = cv2.split(lab)
+
+    # CLAHE objesini oluştur
+    # clipLimit: Kontrastın dozudur (2.0 ile 3.0 arası idealdir, çok artarsa karıncalanma yapar)
+    # tileGridSize: Görüntüyü 8x8 kutulara bölüp her kutuyu kendi içinde aydınlatır
+    clahe = cv2.createCLAHE(clipLimit=2.5, tileGridSize=(8, 8))
+    cl = clahe.apply(l_channel)
+
+    # İşlenmiş parlaklık kanalını (cl) orijinal renk kanallarıyla (a,b) geri birleştir
+    merged = cv2.merge((cl, a, b))
+    
+    # LAB formatından tekrar Keras/Model için RGB'ye dönüştür
+    final_rgb = cv2.cvtColor(merged, cv2.COLOR_LAB2RGB)
+
+    # Derin öğrenme modelinin beklediği float32 formatına çevirip yolla
+    return final_rgb.astype(np.float32)
 
 # GÖRSELLERİ YÜKLEME
 

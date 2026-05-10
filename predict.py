@@ -2,6 +2,7 @@ import numpy as np
 import tensorflow as tf
 from PIL import Image
 import sys
+import cv2
 
 # --- AYARLAR ---
 IMG_SIZE   = 224
@@ -20,15 +21,27 @@ IFF_MAP = {
 
 # --- MODEL YÜKLE ---
 print("Model yükleniyor...")
-model = tf.keras.models.load_model('model/best_model.keras')
+model = tf.keras.models.load_model('model/best_modelCLAHE.keras')
 
 def load_image(path):
     img = Image.open(path).convert('RGBA')
-    bg  = Image.new('RGBA', img.size, (255, 255, 255, 255))
+    bg = Image.new('RGBA', img.size, (255, 255, 255, 255))
     bg.paste(img, mask=img.split()[3])
     img_rgb = bg.convert('RGB').resize((IMG_SIZE, IMG_SIZE))
-    arr = np.array(img_rgb, dtype=np.float32)
-    return np.expand_dims(arr, axis=0)  # (1, 224, 224, 3)
+    
+    img_array = np.array(img_rgb, dtype=np.uint8)
+    
+    lab = cv2.cvtColor(img_array, cv2.COLOR_RGB2LAB)
+    l_channel, a, b = cv2.split(lab)
+    
+    clahe = cv2.createCLAHE(clipLimit=2.5, tileGridSize=(8, 8))
+    cl = clahe.apply(l_channel)
+    
+    merged = cv2.merge((cl, a, b))
+    final_rgb = cv2.cvtColor(merged, cv2.COLOR_LAB2RGB)
+    
+    arr = final_rgb.astype(np.float32)
+    return np.expand_dims(arr, axis=0)
 
 def predict(image_path):
     print(f"\n{'='*50}")

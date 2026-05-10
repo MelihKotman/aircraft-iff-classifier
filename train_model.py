@@ -81,7 +81,7 @@ callbacks = [
         verbose=1
     ),
     ModelCheckpoint(
-        'best_model.keras',
+        'best_modelCLAHE.keras',
         monitor='val_accuracy',
         save_best_only=True,
         verbose=1
@@ -115,9 +115,10 @@ history = model.fit(
     class_weight=class_weight_dict,  # ← bunu ekle
     verbose=1
 )
+
 # --- SONUÇLAR ---
 print("\n--- SONUÇLAR ---")
-best = tf.keras.models.load_model('model/best_model.keras')
+best = tf.keras.models.load_model('best_modelCLAHE.keras')
 
 y_pred       = np.argmax(best.predict(X_test,  verbose=0), axis=1)
 y_pred_train = np.argmax(best.predict(X_train, verbose=0), axis=1)
