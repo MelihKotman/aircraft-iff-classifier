@@ -226,3 +226,5 @@ dataset/
 model/
 model/best_model.
 numpy-set/*.npy
+
+.DS_Store
