@@ -216,3 +216,13 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+#dataset
+dataset/
+
+*.keras
+*.npy
+*.h5
+model/
+model/best_model.
+numpy-set/*.npy
