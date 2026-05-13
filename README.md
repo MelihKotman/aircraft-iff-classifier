@@ -11,7 +11,7 @@ Görsel tabanlı bir **IFF (Identification Friend or Foe)** sistemi. Hava araçl
 | **Model** | EfficientNetB0 (Transfer Learning) |
 | **Test Accuracy** | %97.8 |
 | **Sınıf Sayısı** | 7 (6 askeri + 1 sivil) |
-| **Toplam Görsel** | ~240 |
+| **Toplam Görsel** | ~295 |
 | **Preprocessing** | CLAHE (düşük ışık dayanıklılığı) |
 
 ---
@@ -37,7 +37,7 @@ Görsel (224x224)
       ↓
 CLAHE Preprocessing  ← Karanlık/sisli görüntü iyileştirme
       ↓
-EfficientNetB0       ← ImageNet ağırlıkları (son 50 katman açık)
+EfficientNetB3       ← ImageNet ağırlıkları (son 50 katman açık)
       ↓
 GlobalAveragePooling
       ↓
