@@ -8,10 +8,10 @@ Görsel tabanlı bir **IFF (Identification Friend or Foe)** sistemi. Hava araçl
 
 | | |
 |---|---|
-| **Model** | EfficientNetB0 (Transfer Learning) |
+| **Model** | EfficientNetB3 (Transfer Learning) |
 | **Test Accuracy** | %97.8 |
 | **Sınıf Sayısı** | 7 (6 askeri + 1 sivil) |
-| **Toplam Görsel** | ~295 |
+| **Toplam Görsel** | ~335 |
 | **Preprocessing** | CLAHE (düşük ışık dayanıklılığı) |
 
 ---
@@ -55,15 +55,15 @@ Güven Eşiği (%70)   ← Altındaysa → TANIMLANAMADI
 
 ```
               precision    recall  f1-score
-F-16 (DOST)     1.00      0.88      0.93
-F-35 (DOST)     0.89      1.00      0.94
+F-16 (DOST)     1.00      0.89      0.94
+F-35 (DOST)     1.00      1.00      1.00
 TB2  (DOST)     1.00      1.00      1.00
-MiG-29 (DÜŞMAN) 1.00      1.00      1.00
+MiG-29 (DÜŞMAN) 0.89      1.00      0.94
 Su-57  (DÜŞMAN) 1.00      1.00      1.00
 Heron  (DÜŞMAN) 1.00      1.00      1.00
 Civil           1.00      1.00      1.00
 
-accuracy                           0.978
+accuracy                           0.98
 ```
 
 ---
